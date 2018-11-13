@@ -696,17 +696,18 @@ def main_crop():
             print("   ", f, file=sys.stderr)
         ex.cleanup_and_exit(1)
 
-    input_doc_fname = ex.glob_if_windows_os(args.pdf_input_doc[0], exact_num_args=1)[0]
-    if not input_doc_fname.endswith((".pdf",".PDF")):
-        print("\nWarning in pdfCropMargins: The file extension is neither '.pdf'"
-              "\nnor '.PDF'; continuing anyway.\n", file=sys.stderr)
-    if args.verbose:
-        print("\nThe input document's filename is:\n   ", input_doc_fname)
-    if not os.path.isfile(input_doc_fname):
-        print("\nError in pdfCropMargins: The specified input file\n   "
-              + input_doc_fname + "\nis not a file or does not exist.",
-              file=sys.stderr)
-        ex.cleanup_and_exit(1)
+    ###### Disgusting hack #########
+    input_doc_fname = 'test.pdf'
+    # if not input_doc_fname.endswith((".pdf",".PDF")):
+    #     print("\nWarning in pdfCropMargins: The file extension is neither '.pdf'"
+    #           "\nnor '.PDF'; continuing anyway.\n", file=sys.stderr)
+    # if args.verbose:
+    #     print("\nThe input document's filename is:\n   ", input_doc_fname)
+    # if not os.path.isfile(input_doc_fname):
+    #     print("\nError in pdfCropMargins: The specified input file\n   "
+    #           + input_doc_fname + "\nis not a file or does not exist.",
+    #           file=sys.stderr)
+    #     ex.cleanup_and_exit(1)
 
     if not args.outfile:
         if args.verbose: print("\nUsing the default-generated output filename.")
@@ -855,7 +856,8 @@ def main_crop():
     # fixed_input_doc_file_object = open(fixed_input_doc_fname, "rb")
 
     ######## Disgusting hack #########
-    fixed_input_doc_file_object = BytesIO(sys.stdin.buffer.read())
+    fixed_input_doc_file_object = sys.stdin.buffer.read()
+    fixed_input_doc_file_object = BytesIO(fixed_input_doc_file_object)
 
     try:
         input_doc = PdfFileReader(fixed_input_doc_file_object)
