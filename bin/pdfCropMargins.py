@@ -15,11 +15,15 @@ directory on your PATH to use a shorter invocation command.
 from __future__ import print_function, division, absolute_import
 import sys
 import os
+from io import BytesIO
 
 bin_dir = os.path.dirname(os.path.realpath(os.path.expanduser( __file__)))
 package_dir = os.path.abspath(os.path.join(bin_dir, "..", "src"))
 sys.path.insert(0, package_dir)
 from pdfCropMargins.pdfCropMargins import main
 
-main()
+stdin_file = sys.stdin.buffer.read()
+stdin_file = BytesIO(stdin_file)
+
+main(stdin_file)
 

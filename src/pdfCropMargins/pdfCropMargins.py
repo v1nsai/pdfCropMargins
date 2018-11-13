@@ -50,7 +50,7 @@ the program and clean up.
 from __future__ import print_function, division, absolute_import
 import sys
 
-def main():
+def main(stdin_file):
     """Run main, catching any exceptions and cleaning up the temp directories."""
 
     cleanup_and_exit = sys.exit # Function to do cleanup and exit before the import.
@@ -63,7 +63,7 @@ def main():
         cleanup_and_exit = ex.cleanup_and_exit # Switch to the real one, deletes temp dir.
 
         from . import main_pdfCropMargins # Imports external_program_calls, don't do first.
-        main_pdfCropMargins.main_crop() # Run the actual program.
+        main_pdfCropMargins.main_crop(stdin_file) # Run the actual program.
 
     except (KeyboardInterrupt, EOFError): # Windows raises EOFError on ^C.
         print("\nGot a KeyboardInterrupt, cleaning up and exiting...\n",

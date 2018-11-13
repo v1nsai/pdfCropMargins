@@ -677,7 +677,7 @@ def setup_output_document(input_doc, tmp_input_doc, metadata_info,
 args = parse_command_line_arguments(cmd_parser)
 
 
-def main_crop():
+def main_crop(stdin_file):
     """This function does the real work.  It is called by main() in
     pdfCropMargins.py, which just handles catching exceptions and cleaning up."""
 
@@ -689,15 +689,16 @@ def main_crop():
         print("\nProcessing the PDF with pdfCropMargins...\nSystem type:",
               ex.system_os)
 
-    if len(args.pdf_input_doc) > 1:
-        print("\nError in pdfCropMargins: Only one input PDF document is allowed."
-              "\nFound more than one on the command line:", file=sys.stderr)
-        for f in args.pdf_input_doc:
-            print("   ", f, file=sys.stderr)
-        ex.cleanup_and_exit(1)
+    # if len(args.pdf_input_doc) > 1:
+    #     print("\nError in pdfCropMargins: Only one input PDF document is allowed."
+    #           "\nFound more than one on the command line:", file=sys.stderr)
+    #     for f in args.pdf_input_doc:
+    #         print("   ", f, file=sys.stderr)
+    #     ex.cleanup_and_exit(1)
 
     ###### Disgusting hack #########
     input_doc_fname = 'test.pdf'
+
     # if not input_doc_fname.endswith((".pdf",".PDF")):
     #     print("\nWarning in pdfCropMargins: The file extension is neither '.pdf'"
     #           "\nnor '.PDF'; continuing anyway.\n", file=sys.stderr)
@@ -856,7 +857,7 @@ def main_crop():
     # fixed_input_doc_file_object = open(fixed_input_doc_fname, "rb")
 
     ######## Disgusting hack #########
-    fixed_input_doc_file_object = sys.stdin.buffer.read()
+    fixed_input_doc_file_object = stdin_file
     fixed_input_doc_file_object = BytesIO(fixed_input_doc_file_object)
 
     try:
