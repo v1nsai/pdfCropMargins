@@ -231,18 +231,18 @@ Description:
     """The pdfCropMargins program is Copyright (c) 2014 by Allen Barker.  Released
 under the GNU GPL license, version 3 or later.""")
 
-cmd_parser.add_argument("pdf_input_doc", nargs="+", metavar="PDF_FILE", help="""
-
-   The pathname of the PDF file to crop.  Use quotes around any file or
-   directory name which contains a space.  If no filename is given for the
-   cropped PDF output file via the '-o' flag then a default output filename
-   will be generated.  By default it is the same as the source filename except
-   that the suffix ".pdf" is replaced by "_cropped.pdf", overwriting by default
-   if the file already exists.  The file will be written to the working
-   directory at the time when the program was run.  If the input file has no
-   extension or has an extension other than '.pdf' or '.PDF' then the suffix
-   '.pdf' will be appended to the existing (possibly-null) extension.  Globbing
-   of wildcards is performed on Windows systems.^^n""")
+# cmd_parser.add_argument("pdf_input_doc", nargs="+", metavar="PDF_FILE", help="""
+#
+#    The pathname of the PDF file to crop.  Use quotes around any file or
+#    directory name which contains a space.  If no filename is given for the
+#    cropped PDF output file via the '-o' flag then a default output filename
+#    will be generated.  By default it is the same as the source filename except
+#    that the suffix ".pdf" is replaced by "_cropped.pdf", overwriting by default
+#    if the file already exists.  The file will be written to the working
+#    directory at the time when the program was run.  If the input file has no
+#    extension or has an extension other than '.pdf' or '.PDF' then the suffix
+#    '.pdf' will be appended to the existing (possibly-null) extension.  Globbing
+#    of wildcards is performed on Windows systems.^^n""")
 
 cmd_parser.add_argument("-o", "--outfile", nargs=1, metavar="OUTFILE_NAME",
                        default=[], help="""
