@@ -858,7 +858,7 @@ def main_crop(stdin_file):
 
     ######## Disgusting hack #########
     fixed_input_doc_file_object = stdin_file
-    fixed_input_doc_file_object = BytesIO(fixed_input_doc_file_object)
+    # fixed_input_doc_file_object = BytesIO(fixed_input_doc_file_object)
 
     try:
         input_doc = PdfFileReader(fixed_input_doc_file_object)
@@ -1061,7 +1061,7 @@ def main_crop(stdin_file):
     ##### Disgusting hack #######
     pdfBytes = BytesIO()
     output_doc.write(pdfBytes)
-    sys.stdout.buffer.write(pdfBytes)
+    sys.stdout.buffer.write(pdfBytes.getvalue())
 
     # TODO: Try and except on the open, since it might fail for permissions.
     # output_doc_stream = open(output_doc_fname, "wb")
