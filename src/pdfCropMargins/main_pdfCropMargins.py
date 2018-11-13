@@ -54,6 +54,7 @@ import os
 import shutil
 import time
 import copy
+from io import BytesIO
 
 # Import the module that calls external programs and gets system info.
 from . import external_program_calls as ex
@@ -851,7 +852,10 @@ def main_crop():
 
     # Open the input file object.
     # TODO: Need try except since might fail for permissions.
-    fixed_input_doc_file_object = open(fixed_input_doc_fname, "rb")
+    # fixed_input_doc_file_object = open(fixed_input_doc_fname, "rb")
+
+    ######## Disgusting hack #########
+    fixed_input_doc_file_object = BytesIO(sys.stdin.buffer.read())
 
     try:
         input_doc = PdfFileReader(fixed_input_doc_file_object)
@@ -1051,40 +1055,45 @@ def main_crop():
 
     if args.verbose: print("\nWriting the cropped PDF file.")
 
+    ##### Disgusting hack #######
+    pdfBytes = BytesIO()
+    output_doc.write(pdfBytes)
+    sys.stdout.buffer.write(pdfBytes)
+
     # TODO: Try and except on the open, since it might fail for permissions.
-    output_doc_stream = open(output_doc_fname, "wb")
-
-    try:
-        output_doc.write(output_doc_stream)
-    except (KeyboardInterrupt, EOFError):
-        raise
-    except: # PyPDF2 can raise various exceptions.
-        try:
-            # We know the write succeeded on tmp_output_doc or we wouldn't be here.
-            # Malformed document catalog info can cause write failures, so get
-            # a new output_doc without that data and try the write again.
-            print("\nWrite failure, trying one more time...", file=sys.stderr)
-            output_doc_stream.close()
-            output_doc_stream = open(output_doc_fname, "wb")
-            output_doc, tmp_output_doc, already_cropped = setup_output_document(
-                    input_doc, tmp_input_doc, metadata_info, copy_document_catalog=False)
-            output_doc.write(output_doc_stream)
-            print("\nWarning: Document catalog data caused a write failure.  A retry"
-                  "\nwithout that data succeeded.  No document catalog information was"
-                  "\ncopied to the cropped output file.  Try fixing the PDF file.  If"
-                  "\nyou have ghostscript installed, run pdfCropMargins with the '--gsFix'"
-                  "\noption.  You can also try blacklisting some of the document catalog"
-                  "\nitems using the '--dcb' option.", file=sys.stderr)
-        except (KeyboardInterrupt, EOFError):
-            raise
-        except: # Give up... PyPDF2 can raise many errors for many reasons.
-            print("\nError in pdfCropMargins: The pyPdf program failed in trying to"
-                  "\nwrite out a PDF file of the document.  The document may be"
-                  "\ncorrupted.  If you have Ghostscript, try using the '--gsFix'"
-                  "\noption (assuming you are not already using it).", file=sys.stderr)
-            ex.cleanup_and_exit(1)
-
-    output_doc_stream.close()
+    # output_doc_stream = open(output_doc_fname, "wb")
+    #
+    # try:
+    #     output_doc.write(output_doc_stream)
+    # except (KeyboardInterrupt, EOFError):
+    #     raise
+    # except: # PyPDF2 can raise various exceptions.
+    #     try:
+    #         # We know the write succeeded on tmp_output_doc or we wouldn't be here.
+    #         # Malformed document catalog info can cause write failures, so get
+    #         # a new output_doc without that data and try the write again.
+    #         print("\nWrite failure, trying one more time...", file=sys.stderr)
+    #         output_doc_stream.close()
+    #         output_doc_stream = open(output_doc_fname, "wb")
+    #         output_doc, tmp_output_doc, already_cropped = setup_output_document(
+    #                 input_doc, tmp_input_doc, metadata_info, copy_document_catalog=False)
+    #         output_doc.write(output_doc_stream)
+    #         print("\nWarning: Document catalog data caused a write failure.  A retry"
+    #               "\nwithout that data succeeded.  No document catalog information was"
+    #               "\ncopied to the cropped output file.  Try fixing the PDF file.  If"
+    #               "\nyou have ghostscript installed, run pdfCropMargins with the '--gsFix'"
+    #               "\noption.  You can also try blacklisting some of the document catalog"
+    #               "\nitems using the '--dcb' option.", file=sys.stderr)
+    #     except (KeyboardInterrupt, EOFError):
+    #         raise
+    #     except: # Give up... PyPDF2 can raise many errors for many reasons.
+    #         print("\nError in pdfCropMargins: The pyPdf program failed in trying to"
+    #               "\nwrite out a PDF file of the document.  The document may be"
+    #               "\ncorrupted.  If you have Ghostscript, try using the '--gsFix'"
+    #               "\noption (assuming you are not already using it).", file=sys.stderr)
+    #         ex.cleanup_and_exit(1)
+    #
+    # output_doc_stream.close()
 
     # We're finished with this open file; close it and let temp dir removal delete it.
     fixed_input_doc_file_object.close()
